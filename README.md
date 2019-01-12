@@ -14,15 +14,23 @@ Passwordless Authentication Driver for Laravel 5.7. Just add water.
 ## What includes
 
 * Passless Authentication Guard Driver
+* Passless Login Controller
 * `LoginAuthentication` Notification
-* Resend Email Blade view
 * Little magic
+
+## Install
+
+Just fire up Composer and require it into your Laravel project:
+
+```bash
+composer require darkghosthunter/passless
+```
 
 ## How to use
 
 Passless is easy to integrate into your application, but before start using it you should change some strings in your configuration to point your app to use this package.
 
-Don't worry, it doesn't breaks your Laravel installation.
+Don't worry, it doesn't breaks your Laravel installation in any way.
 
 ### 1) Add the Guard Driver
 
@@ -47,7 +55,7 @@ Go into your `config/auth.php` and add `passless` as the driver for your guard.
 
 Since the user won't be logged in immediately into your application when his credentials are validated, you should return a view which Notifies the user to check his email with an alert.
 
-While you are free to use any view to inform the user, you can just simply add a flash notification in your Login route.
+While you are free to use any View to inform the user, you can just simply add a [flash notification](https://laravel.com/docs/5.7/session#flash-data) in your Login route, along with the [proper markup](https://laravel.com/docs/5.7/blade).
 
 If you're using the default controller, add or replace this code:
 
@@ -61,7 +69,9 @@ If you're using the default controller, add or replace this code:
  */
 protected function authenticated(Request $request, $user)
 {
-    return view('auth.login')->flash('message', 'Login Email Sent');
+    $request->session()->flash('success', 'Check your email to log in!');
+
+    return view('auth.login');
 }
 ```
 
@@ -82,8 +92,7 @@ You should definitively edit this config file if:
 * You're using a custom authentication controllers.
 * You're using additional middleware across your routes.
 * Need a different Login for Passless.
-* Want to use different Notification or Resend View.
-* Modify the Resend throttle.
+* Need a better Notification for your Login Email. 
 
 ## License 
 
