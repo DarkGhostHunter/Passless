@@ -26,6 +26,37 @@ Just fire up Composer and require it into your Laravel project:
 composer require darkghosthunter/passless
 ```
 
+## How it works
+
+This guards extends the default `SessionGuard` and only overrides the authentication method to **not** check the password, only if the user exists by the given credentials (email plus whatever you set in your form).
+
+To register your users without a password, allow in your migration files the `password` string to be `nullable()`. Alternatively, pass an empty string on registration.
+
+```php
+Schema::create('users', function (Blueprint $table) {
+    // ...
+    
+    $table->string('password')->nullable();
+    
+    $table->rememberToken();
+    $table->timestamps();
+});
+```
+
+In your login form, you can discard the password input and leave only the email or username.
+
+```blade
+<form action="{{ route('auth.login') }}" method="post">
+    @csrf
+    <input name="email" type="email" placeholder="Put your email">
+    <button type="Submit">
+</form
+```
+
+This will allow users to login through an email (if they're are registered), and throw an auth error if it doesn't.
+
+The Email contains a temporarily signed URL which directs the user to the Passless LoginController, which will login the user into your application.
+
 ## How to use
 
 Passless is easy to integrate into your application, but before start using it you should change some strings in your configuration to point your app to use this package.
