@@ -51,7 +51,7 @@ Go into your `config/auth.php` and add `passless` as the driver for your guard.
 
 > Remember to set the correct guard (in this case, `web`) to use the passless driver in your Login controllers. 
 
-### 2) Add the Login redirect to Passless
+### 2) Add the proper Login response
 
 Since the user won't be logged in immediately into your application when his credentials are validated, you should return a view which Notifies the user to check his email with an alert.
 
@@ -65,13 +65,15 @@ If you're using the default controller, add or replace this code:
  *
  * @param  \Illuminate\Http\Request  $request
  * @param  mixed  $user
- * @return mixed
+ * @return \Illuminate\Http\Response
  */
 protected function authenticated(Request $request, $user)
-{
+{ 
+    $request->flashOnly(['email']);
+
     $request->session()->flash('success', 'Check your email to log in!');
 
-    return view('auth.login');
+    return response()->view('auth.login');
 }
 ```
 
@@ -85,14 +87,14 @@ For fine tuning, publish the Passless configuration:
 php artisan vendor:publish --provider="DarkGhostHunter\Passless\PasslessServiceProvider"
 ```
 
-The contents of the config file are self-explanatory, so check the comments. 
-
 You should definitively edit this config file if:
 
 * You're using a custom authentication controllers.
 * You're using additional middleware across your routes.
 * Need a different Login for Passless.
-* Need a better Notification for your Login Email. 
+* Need a better Notification for your Login Email.
+
+The contents of the config file are self-explanatory, so check the comments over each setting key.  
 
 ## License 
 
