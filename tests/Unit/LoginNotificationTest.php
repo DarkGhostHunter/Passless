@@ -15,7 +15,7 @@ class LoginNotificationTest extends TestCase
     /** @var LoginNotification */
     protected $notification;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
