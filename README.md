@@ -9,7 +9,9 @@ Passwordless Authentication Driver for Laravel 5.7. Just add water.
 
 ## Requirements
 
-* Laravel 5.7 (Lumen *may* work)
+* Laravel 5.8 (Lumen *may* work)
+
+> Check older releases for older Laravel versions.
 
 ## What includes
 
