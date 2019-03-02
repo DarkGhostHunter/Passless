@@ -5,7 +5,7 @@
 
 # Passless
 
-Passwordless Authentication Driver for Laravel 5.7. Just add water.
+Passwordless Authentication Driver for Laravel. Just add water.
 
 ## Requirements
 
