@@ -5,11 +5,13 @@
 
 # Passless
 
-Passwordless Authentication Driver for Laravel 5.7. Just add water.
+Passwordless Authentication Driver for Laravel. Just add water.
 
 ## Requirements
 
-* Laravel 5.7 (Lumen *may* work)
+* Laravel 5.8 (Lumen *may* work)
+
+> Check older releases for older Laravel versions.
 
 ## What includes
 
@@ -25,6 +27,37 @@ Just fire up Composer and require it into your Laravel project:
 ```bash
 composer require darkghosthunter/passless
 ```
+
+## How it works
+
+This guards extends the default `SessionGuard` and only overrides the authentication method to **not** check the password, only if the user exists by the given credentials (email or whatever keys you set in your form or controller).
+
+To register your users without a password, allow in your migration files the `password` string to be `nullable()`. Alternatively, pass an empty string on registration.
+
+```php
+Schema::create('users', function (Blueprint $table) {
+    // ...
+    
+    $table->string('password')->nullable();
+    
+    $table->rememberToken();
+    $table->timestamps();
+});
+```
+
+In your login form, you can discard the password input and leave only the email or username.
+
+```blade
+<form action="{{ route('auth.login') }}" method="post">
+    @csrf
+    <input name="email" type="email" placeholder="Put your email">
+    <button type="Submit">
+</form
+```
+
+This will allow users to login through an email (if they're are registered), and throw an auth error if it doesn't.
+
+When the user signs-in, an email is dispatched. The Email contains a temporarily signed URL which directs the user to the Passless `LoginController`, which will login the user into your application.
 
 ## How to use
 
@@ -51,7 +84,7 @@ Go into your `config/auth.php` and add `passless` as the driver for your guard.
 
 > Remember to set the correct guard (in this case, `web`) to use the passless driver in your Login controllers. 
 
-### 2) Add the Login redirect to Passless
+### 2) Add the proper Login response
 
 Since the user won't be logged in immediately into your application when his credentials are validated, you should return a view which Notifies the user to check his email with an alert.
 
@@ -65,17 +98,19 @@ If you're using the default controller, add or replace this code:
  *
  * @param  \Illuminate\Http\Request  $request
  * @param  mixed  $user
- * @return mixed
+ * @return \Illuminate\Http\Response
  */
 protected function authenticated(Request $request, $user)
-{
+{ 
+    $request->flashOnly(['email']);
+
     $request->session()->flash('success', 'Check your email to log in!');
 
-    return view('auth.login');
+    return response()->view('auth.login');
 }
 ```
 
-> Since there is no password check in the login form, you may want to add a throttler to your Login route to avoid Mail asphyxiation.
+> Since there is no password check in the login form, you may want to add a throttler middleware like `throttle:60,3` to your Login route to avoid Mail asphyxiation.
 
 ## Configuration
 
@@ -85,14 +120,14 @@ For fine tuning, publish the Passless configuration:
 php artisan vendor:publish --provider="DarkGhostHunter\Passless\PasslessServiceProvider"
 ```
 
-The contents of the config file are self-explanatory, so check the comments. 
-
 You should definitively edit this config file if:
 
 * You're using a custom authentication controllers.
 * You're using additional middleware across your routes.
 * Need a different Login for Passless.
-* Need a better Notification for your Login Email. 
+* Need a better Notification for your Login Email.
+
+The contents of the config file are self-explanatory, so check the comments over each setting key.  
 
 ## License 
 
