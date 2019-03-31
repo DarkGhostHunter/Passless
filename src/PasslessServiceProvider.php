@@ -29,6 +29,9 @@ class PasslessServiceProvider extends ServiceProvider
     {
         $this->bootGuardDriver();
         $this->bootRoute();
+        $this->publishes([
+            __DIR__ . '/../config/passless.php' => config_path('passless.php'),
+        ]);
     }
 
     /**
