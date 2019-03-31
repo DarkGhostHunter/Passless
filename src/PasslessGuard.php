@@ -60,7 +60,10 @@ class PasslessGuard extends SessionGuard
      */
     public function sendLoginNotification(Authenticatable $user, bool $remember, string $intended = null)
     {
-        $notification = app()->make(LoginNotification::class, [
+    	// Check first if the config has a notification class set.
+		$notification = app('config')->get('passless.notification') ?? LoginNotification::class;
+
+        $notification = app()->make($notification, [
             'remember' => $remember,
             'intended' => $intended
         ]);
