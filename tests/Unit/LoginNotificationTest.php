@@ -72,4 +72,14 @@ class LoginNotificationTest extends TestCase
         $this->assertInstanceOf(ShouldQueue::class, $this->notification);
         $this->assertArrayHasKey('Illuminate\Bus\Queueable', class_uses($this->notification));
     }
+
+    public function testQueuedNotificationCanBeSerialized()
+    {
+        try {
+            serialize($this->notification);
+            $this->assertTrue(true);
+        } catch (\Exception $e) {
+            $this->fail($e->getMessage());
+        }
+    }
 }
