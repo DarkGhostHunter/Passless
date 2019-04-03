@@ -5,7 +5,6 @@ namespace DarkGhostHunter\Passless;
 use Illuminate\Bus\Queueable;
 use Illuminate\Config\Repository as Config;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Routing\UrlGenerator as Url;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -22,18 +21,25 @@ class LoginNotification extends Notification implements ShouldQueue
     protected $remember;
 
     /**
-     * The Config Repository
+     * The app name
      *
-     * @var Config
+     * @var string
      */
-    protected $config;
+    protected $app_name;
 
     /**
-     * The URL Generator
+     * The link lifetime in minutes
      *
-     * @var Url
+     * @var integer
      */
-    protected $url;
+    protected $lifetime;
+
+    /**
+     * The Passless login route name
+     *
+     * @var string
+     */
+    protected $passless_route;
 
     /**
      * URL Path of authentication
@@ -55,14 +61,14 @@ class LoginNotification extends Notification implements ShouldQueue
      * @param bool $remember
      * @param string|null $intended
      * @param Config $config
-     * @param Url $url
      */
-    public function __construct(bool $remember,?string $intended, Config $config, Url $url)
+    public function __construct(bool $remember,?string $intended, Config $config)
     {
         $this->remember = $remember;
         $this->intended = $intended;
-        $this->config = $config;
-        $this->url = $url;
+        $this->app_name = $config->get('app.name');
+        $this->lifetime = $config->get('passless.lifetime');
+        $this->passless_route = $config->get('passless.login.name');
     }
 
     /**
@@ -84,13 +90,11 @@ class LoginNotification extends Notification implements ShouldQueue
      */
     public function toMail(Authenticatable $notifiable)
     {
-        $lifetime = $this->config->get('passless.lifetime');
-
         return (new MailMessage)
-            ->greeting('Login to ' . $this->config->get('app.name'))
+            ->greeting("Login to {$this->app_name}")
             ->line('Click the button to login. No password required.')
-            ->action('Login', $this->createLoginUrl($notifiable, $lifetime))
-            ->line("This link only last for $lifetime minutes.")
+            ->action('Login', $this->createLoginUrl($notifiable, $this->lifetime))
+            ->line("This link only lasts for {$this->lifetime} minutes.")
             ->line('Thank you for using our application!');
     }
 
@@ -116,8 +120,8 @@ class LoginNotification extends Notification implements ShouldQueue
      */
     public function createLoginUrl($notifiable, int $lifetime)
     {
-        return $this->path = $this->url->temporarySignedRoute(
-            $this->config->get('passless.login.name'),
+        return $this->path = app('url')->temporarySignedRoute(
+            $this->passless_route,
             now()->addMinutes($lifetime),
             array_filter([
                 'id' => $notifiable->getAuthIdentifier(),
