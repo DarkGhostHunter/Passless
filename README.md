@@ -82,13 +82,33 @@ Go into your `config/auth.php` and add `passless` as the driver for your guard.
 ],
 ```
 
-> Remember to set the correct guard (in this case, `web`) to use the passless driver in your Login controllers. 
+> Remember to set the correct guard (in this case, `web`) to use the passless driver in your Login and Register Controllers.
 
-### 2) Add the proper Login response
+### 2) Disable the password validation
 
-Since the user won't be logged in immediately into your application when his credentials are validated, you should return a view which Notifies the user to check his email with an alert.
+In your login form you shouldn't have the `password` input. If you're using the default `Auth\LoginController` class, you should override the `validateLogin()` method and disable the password validation.
 
-While you are free to use any View to inform the user, you can just simply add a [flash notification](https://laravel.com/docs/5.7/session#flash-data) in your Login route, along with the [proper markup](https://laravel.com/docs/5.7/blade).
+```php
+/**
+ * Validate the user login request.
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @return void
+ */
+protected function validateLogin(Request $request)
+{
+    $this->validate($request, [
+        $this->username() => 'required'
+        // 'password' => 'required
+    ]);
+}
+```
+
+### 3) Add the proper Login response
+
+Since the user won't be logged in immediately into your application when your credentials are validated, you should return a view which Notifies the user to check his email with a message or alert.
+
+While you are free to use any View to inform the user, you can just simply add a [flash notification](https://laravel.com/docs/session#flash-data) in your Login route, along with the [proper markup](https://laravel.com/docs/blade) to retrieve and show the notification in the view.
 
 If you're using the default controller, add or replace this code:
 
@@ -110,7 +130,7 @@ protected function authenticated(Request $request, $user)
 }
 ```
 
-> Since there is no password check in the login form, you may want to add a throttler middleware like `throttle:60,3` to your Login route to avoid Mail asphyxiation.
+> Since there is no password check in the login form, you may want to add a throttler middleware like `throttle:60,3` to your Login route to avoid mail asphyxiation.
 
 ## Configuration
 
