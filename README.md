@@ -82,7 +82,7 @@ Go into your `config/auth.php` and add `passless` as the driver for your guard.
 ],
 ```
 
-> Remember to set the correct guard (in this case, `web`) to use the passless driver in your Login controllers. 
+> Remember to set the correct guard (in this case, `web`) to use the passless driver in your Login and Register Controllers.
 
 ### 2) Disable the password validation
 
@@ -137,7 +137,7 @@ protected function authenticated(Request $request, $user)
 For fine tuning, publish the Passless configuration:
 
 ```bash
-php artisan vendor:publish --provider=DarkGhostHunter\Passless\PasslessServiceProvider
+php artisan vendor:publish --provider="DarkGhostHunter\Passless\PasslessServiceProvider"
 ```
 
 You should definitively edit this config file if:

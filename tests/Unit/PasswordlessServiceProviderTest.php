@@ -4,8 +4,10 @@ namespace Tests\Unit;
 
 use DarkGhostHunter\Passless\PasslessGuard;
 use Illuminate\Contracts\Auth\Factory;
+use Illuminate\Support\Facades\Artisan;
 use Orchestra\Testbench\TestCase;
 use Tests\RegistersPackage;
+use DarkGhostHunter\Passless\PasslessServiceProvider;
 
 class PasswordlessServiceProviderTest extends TestCase
 {
@@ -47,8 +49,8 @@ class PasswordlessServiceProviderTest extends TestCase
         /** @var \Illuminate\Contracts\Routing\UrlGenerator $router */
         $router = $this->app->make(\Illuminate\Contracts\Routing\UrlGenerator::class);
 
-        $this->assertTrue(
-            filter_var($router->route('passless.login'), FILTER_VALIDATE_URL) !== false
+        $this->assertNotFalse(
+            filter_var($router->route('passless.login'), FILTER_VALIDATE_URL)
         );
     }
 
@@ -57,6 +59,23 @@ class PasswordlessServiceProviderTest extends TestCase
         $config = include __DIR__ . '/../../config/passless.php';
 
         $this->assertEquals($this->app->make('config')->get('passless'), $config);
+    }
+
+    public function testPublishesConfig()
+    {
+        $file = app()->configPath('passless.php');
+
+        if (file_exists($file)) {
+            unlink($file);
+        }
+
+        Artisan::call('vendor:publish', [
+            '--provider' => PasslessServiceProvider::class
+        ]);
+
+        $this->assertFileEquals(__DIR__ . '/../../config/passless.php', $file);
+
+        unlink($file);
     }
 
 }

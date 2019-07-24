@@ -57,6 +57,7 @@ class PasslessGuard extends SessionGuard
      * @param Authenticatable $user
      * @param bool $remember
      * @param string $intended
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function sendLoginNotification(Authenticatable $user, bool $remember, string $intended = null)
     {
