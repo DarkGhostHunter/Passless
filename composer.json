@@ -1,6 +1,6 @@
 {
   "name": "darkghosthunter/passless",
-  "description": "Passless is a password-less authentication guard driver for Laravel 5.7",
+  "description": "Passless is a password-less authentication guard driver for Laravel 5.8",
   "minimum-stability": "dev",
   "license": "MIT",
   "authors": [
