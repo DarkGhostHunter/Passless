@@ -39,5 +39,13 @@
         "DarkGhostHunter\\Passless\\PasslessServiceProvider"
       ]
     }
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit",
+    "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+  },
+  "config": {
+    "sort-packages": true
   }
 }
