@@ -1,3 +1,5 @@
+# This package has been abandoned. If you need Passwordless Authentication, [migrate to Laravel Passwordless Login](https://github.com/grosv/laravel-passwordless-login?ref=laravelnews).
+
 ![Robert Gramner - Unsplash (UL) #as2iiiiFdqk](https://images.unsplash.com/photo-1525069396440-d4c44fa51343?ixlib=rb-1.2.1&auto=format&fit=crop&w=1280&h=400&q=80)
 
 [![Latest Stable Version](https://poser.pugx.org/darkghosthunter/passless/v/stable)](https://packagist.org/packages/darkghosthunter/passless) [![License](https://poser.pugx.org/darkghosthunter/passless/license)](https://packagist.org/packages/darkghosthunter/passless)
